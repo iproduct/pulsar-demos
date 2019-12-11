@@ -18,15 +18,7 @@ public class PulsarBasicClient {
                 .subscriptionType(SubscriptionType.Exclusive)
                 .subscribe();
 
-        // You can then send messages to the broker and topic you specified:
-        producer.send("My message 1");
-        producer.sendAsync("my-async-message 1").thenAccept(msgId -> {
-            System.out.printf("Message with ID %s successfully sent", msgId);
-        });
-        producer.send("My message 2");
-        producer.send("My message 3");
-        producer.send("My message 4");
-
+        // receiving messages asynchronously
         for(int i = 0; i < 4; i++) {
             consumer.receiveAsync().thenAccept(msg -> {
                 System.out.printf("!!!! Message received: %s\n\n", msg.getValue());
@@ -35,8 +27,18 @@ public class PulsarBasicClient {
                 } catch (PulsarClientException e) {
                     e.printStackTrace();
                 }
-            });//.join();
+            });
         }
+
+        // You can then send messages to the broker and topic you specified:
+        producer.send("My message 1");
+        producer.sendAsync("my-async-message 1").thenAccept(msgId -> {
+            System.out.printf("Message with ID %s successfully sent \n\n", msgId);
+        });
+        producer.send("My message 2");
+        producer.send("My message 3");
+        producer.send("My message 4");
+
 
         Thread.sleep(10000);
         producer.close();
